@@ -1,0 +1,45 @@
+# robots.txt for betterswitch.io
+
+# Allow all search engines
+User-agent: *
+Allow: /
+
+# Allow AI training (OpenAI GPTBot)
+User-agent: GPTBot
+Allow: /
+
+# Allow AI training (Common Crawl)
+User-agent: CCBot
+Allow: /
+
+# Allow AI training (Google AI training)
+User-agent: Google-Extended
+Allow: /
+
+# Allow AI training (Anthropic Claude)
+User-agent: ClaudeBot
+Allow: /
+
+# Allow AI training (Facebook AI)
+User-agent: FacebookBot
+Allow: /
+
+# Block problematic bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: *
+Allow: /favicon.ico
+
+
+# Crawl-delay (be nice to crawlers)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://betterswitch.io/sitemap.xml

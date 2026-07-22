@@ -1,0 +1,1 @@
+import{j as r}from"./index-CNXBunv3.js";import{m as e}from"./react-BU9KDKfP.js";function m({children:i,delay:t=0,...o}){return r.jsx(e.div,{initial:{opacity:0,y:24},whileInView:{opacity:1,y:0},viewport:{once:!0,margin:"-60px"},transition:{duration:.6,delay:t,ease:[.25,.1,.25,1]},...o,children:i})}export{m as R};

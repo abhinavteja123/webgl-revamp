@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BetterSwitch Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+::selection { background: rgba(226,117,51,0.15); }
+:root {
+  --bg: #FAFAFA; --card: #FFFFFF; --sidebar-bg: #FAFAFA;
+  --accent: #e27533; --accent-hover: #F28C38; --accent-muted: rgba(226,117,51,0.10); --accent-soft: rgba(226,117,51,0.05);
+  --text-1: #111111; --text-2: #4B5563; --text-3: #9CA3AF;
+  --border: #E5E7EB; --border-card: rgba(0,0,0,0.05);
+  --success: #10B981; --error: #EF4444; --warning: #F59E0B; --info: #3B82F6;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --r-sm: 6px; --r-md: 8px; --r-lg: 12px;
+  --sans: 'Figtree', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+html { -webkit-font-smoothing: antialiased; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text-1); font-size: 13px; line-height: 1.5; overflow: hidden; height: 100vh; }
+.layout { display: flex; height: 100vh; }
+
+/* ── Sidebar ── */
+.sb { width: 232px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 16px 0; overflow-y: auto; }
+.sb-brand { display: flex; align-items: center; gap: 1px; padding: 0 16px; margin-bottom: 24px; justify-content: center; }
+.sb-logo { width: 24px; height: 24px; border-radius: 5px; background: var(--accent); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.sb-logo svg { width: 24px; height: 24px; }
+.sb-name { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 500; letter-spacing: -0.025em; }
+.sb-name b { color: var(--text-1); font-weight: 500; }
+.sb-name em { color: var(--accent); font-style: normal; font-weight: 500; }
+.sb-section { font-size: 9px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; padding: 16px 16px 6px; }
+.sb a, .sb button { display: flex; align-items: center; gap: 9px; padding: 7px 16px; font-size: 12.5px; font-weight: 500; color: var(--text-2); text-decoration: none; border: none; background: none; width: 100%; cursor: pointer; border-left: 2.5px solid transparent; transition: all 0.12s; font-family: var(--sans); }
+.sb a:hover, .sb button:hover { background: rgba(0,0,0,0.025); color: var(--text-1); }
+.sb a.on { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); font-weight: 600; }
+.sb a.on svg, .sb button.on svg { opacity: 1; }
+.sb svg { width: 15px; height: 15px; opacity: 0.55; flex-shrink: 0; }
+.sb .badge { margin-left: auto; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 10px; background: var(--accent-muted); color: var(--accent); }
+.sb .badge-warn { background: rgba(245,158,11,0.1); color: #D97706; }
+.sb-divider { height: 1px; background: var(--border); margin: 8px 16px; }
+.sb .sub { padding-left: 40px; font-size: 12px; color: var(--text-3); }
+.sb .sub:hover { color: var(--text-2); }
+
+/* ── Main ── */
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+/* Topbar */
+.top { display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; border-bottom: 1px solid var(--border); background: rgba(250,250,250,0.92); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; flex-shrink: 0; }
+.top-search { display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm); font-size: 11.5px; color: var(--text-3); min-width: 240px; }
+.top-search kbd { margin-left: auto; font-family: var(--sans); font-size: 9.5px; padding: 1px 5px; background: var(--bg); border-radius: 3px; color: var(--text-3); border: 1px solid var(--border); }
+.top-r { display: flex; align-items: center; gap: 10px; }
+.env { display: flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 100px; background: rgba(16,185,129,0.08); color: #059669; }
+.env-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--success); }
+.top-icon { width: 30px; height: 30px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; color: var(--text-3); }
+.top-icon:hover { background: rgba(0,0,0,0.04); color: var(--text-2); }
+.avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 9.5px; font-weight: 700; color: white; }
+.top-user { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; }
+
+/* Content */
+.ct { padding: 20px 24px 32px; flex: 1; }
+.ct-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.ct-title { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+.date-btn { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border: 1px solid var(--border); border-radius: var(--r-sm); font-size: 11.5px; font-weight: 500; color: var(--text-2); background: var(--card); font-family: var(--sans); cursor: pointer; }
+
+/* KPI Cards */
+.kpi-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.kpi-card { background: var(--card); border: 1px solid var(--border-card); border-radius: var(--r-lg); padding: 14px 16px 10px; position: relative; overflow: hidden; }
+.kpi-card:hover { border-color: var(--border); box-shadow: var(--shadow-sm); }
+.kpi-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.kpi-card-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; }
+.kpi-card-change { font-size: 10.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kpi-card-change.up { color: #059669; }
+.kpi-card-change.down { color: #DC2626; }
+.kpi-card-val { font-size: 20px; font-weight: 800; color: var(--text-1); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1; margin-bottom: 3px; }
+.kpi-card-label { font-size: 11px; font-weight: 500; color: var(--text-3); }
+.kpi-spark { position: absolute; bottom: 0; right: 0; width: 80px; height: 24px; opacity: 0.5; }
+
+/* Cards */
+.row { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px; }
+.c { background: var(--card); border: 1px solid var(--border-card); border-radius: var(--r-lg); box-shadow: var(--shadow-xs); overflow: hidden; min-width: 0; }
+.c-h { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid rgba(0,0,0,0.02); }
+.c-t { font-size: 12.5px; font-weight: 600; }
+.tabs { display: flex; gap: 1px; background: rgba(0,0,0,0.04); border-radius: 100px; padding: 2px; border: 1px solid var(--border); }
+.tab { padding: 3px 10px; border-radius: 100px; font-size: 10.5px; font-weight: 500; color: var(--text-3); background: none; border: none; font-family: var(--sans); cursor: pointer; }
+.tab.on { background: var(--card); color: var(--text-1); box-shadow: var(--shadow-xs); }
+.c-b { padding: 14px 16px; }
+
+/* Chart area */
+.chart { position: relative; height: 180px; }
+.chart canvas { width: 100%; height: 100%; }
+
+/* Status list */
+.sts { display: flex; flex-direction: column; gap: 14px; padding: 4px 0; }
+.st { display: flex; align-items: center; gap: 9px; }
+.st-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.st-l { font-size: 12.5px; color: var(--text-2); flex: 1; }
+.st-v { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Table */
+.tbl-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.tbl-t { font-size: 13px; font-weight: 600; }
+.va { font-size: 11.5px; font-weight: 600; color: var(--accent); display: flex; align-items: center; gap: 3px; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 8px 14px; font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+td { padding: 10px 14px; font-size: 12.5px; border-bottom: 1px solid rgba(0,0,0,0.025); font-variant-numeric: tabular-nums; }
+tr:hover td { background: rgba(0,0,0,0.008); }
+.mn { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.ma { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: white; flex-shrink: 0; }
+.bg { display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 100px; }
+.bg-s { background: rgba(16,185,129,0.08); color: #059669; }
+.bg-i { background: rgba(59,130,246,0.08); color: #2563EB; }
+.bg-w { background: rgba(245,158,11,0.08); color: #D97706; }
+.bg-dot { width: 4px; height: 4px; border-radius: 50%; }
+.bg-s .bg-dot { background: #10B981; } .bg-i .bg-dot { background: #3B82F6; } .bg-w .bg-dot { background: #D97706; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sb">
+    <div class="sb-brand">
+      <div class="sb-logo"><img src="landing-logo-icon.png" width="24" height="24" alt="b" style="border-radius:5px;display:block"></div>
+      <div class="sb-name"><b>better</b><em>switch</em></div>
+    </div>
+
+    <div class="sb-section">Platform</div>
+    <a class="on" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Overview</a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>Transactions<span class="badge">2.4K</span></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Processors</a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>Smart Routing</a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics</a>
+
+    <div class="sb-section">Commerce</div>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Storefront</a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>Payment Links</a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 010-4h14v4"/><path d="M3 5v14a2 2 0 002 2h16v-5"/><path d="M18 12a2 2 0 000 4h4v-4h-4z"/></svg>Wallets</a>
+
+    <div class="sb-section">Compliance</div>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>PCI DSS<span class="badge bg-s" style="background:rgba(16,185,129,0.1);color:#059669;">Level 1</span></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>KYC / KYB</a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Audit Logs</a>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">Settings</div>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Merchants</a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>API Keys<span class="badge-warn badge">3</span></a>
+    <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+  </nav>
+
+  <main class="main">
+    <div class="top">
+      <div class="top-search">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search or jump to...
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="top-r">
+        <div class="env"><span class="env-dot"></span>LIVE</div>
+        <span class="top-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        <span class="top-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></span>
+        <span class="top-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></span>
+        <div style="width:1px;height:20px;background:var(--border);margin:0 4px"></div>
+        <div class="top-user"><span class="avatar">JD</span><span>John Doe</span></div>
+      </div>
+    </div>
+
+    <div class="ct">
+      <div class="ct-header">
+        <h1 class="ct-title">Overview</h1>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="date-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Last 30 days<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <button class="date-btn" style="color:var(--accent);border-color:var(--accent-muted)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-cards">
+        <div class="kpi-card">
+          <div class="kpi-card-top">
+            <span class="kpi-card-icon" style="background:var(--accent-soft);color:var(--accent)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
+            <span class="kpi-card-change up">+18.2%</span>
+          </div>
+          <div class="kpi-card-val">$10.2M</div>
+          <div class="kpi-card-label">Total Volume</div>
+          <svg class="kpi-spark" viewBox="0 0 80 24"><path d="M0,20 C10,18 15,22 25,16 C35,10 40,14 50,8 C60,4 70,6 80,2" fill="none" stroke="#e27533" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-card-top">
+            <span class="kpi-card-icon" style="background:rgba(59,130,246,0.08);color:#3B82F6"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></span>
+            <span class="kpi-card-change up">+12.4%</span>
+          </div>
+          <div class="kpi-card-val">142,840</div>
+          <div class="kpi-card-label">Transactions</div>
+          <svg class="kpi-spark" viewBox="0 0 80 24"><path d="M0,18 C10,16 20,20 30,12 C40,8 50,14 60,6 C70,4 75,5 80,3" fill="none" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-card-top">
+            <span class="kpi-card-icon" style="background:rgba(16,185,129,0.08);color:#10B981"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+            <span class="kpi-card-change up">+0.3%</span>
+          </div>
+          <div class="kpi-card-val">99.7%</div>
+          <div class="kpi-card-label">Success Rate</div>
+          <svg class="kpi-spark" viewBox="0 0 80 24"><path d="M0,12 C10,10 20,14 30,8 C40,6 50,10 60,4 C70,3 75,5 80,2" fill="none" stroke="#10B981" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-card-top">
+            <span class="kpi-card-icon" style="background:rgba(245,158,11,0.08);color:#F59E0B"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span>
+            <span class="kpi-card-change" style="color:var(--text-3)">48 active</span>
+          </div>
+          <div class="kpi-card-val">52</div>
+          <div class="kpi-card-label">Merchants</div>
+          <svg class="kpi-spark" viewBox="0 0 80 24"><path d="M0,20 C15,18 25,14 35,12 C45,10 55,8 65,6 C72,4 78,3 80,3" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="c c-w">
+          <div class="c-h"><span class="c-t">Transaction Volume</span><div class="tabs"><button class="tab on">Top 7</button><button class="tab">All</button></div></div>
+          <div class="c-b"><div class="chart"><canvas id="vc"></canvas></div></div>
+        </div>
+        <div class="c c-n">
+          <div class="c-h"><span class="c-t">Payment Methods</span></div>
+          <div class="c-b" style="display:flex;align-items:center;gap:16px">
+            <!-- Donut chart -->
+            <svg width="110" height="110" viewBox="0 0 120 120" style="flex-shrink:0">
+              <circle cx="60" cy="60" r="46" fill="none" stroke="#E5E7EB" stroke-width="14"/>
+              <circle cx="60" cy="60" r="46" fill="none" stroke="#e27533" stroke-width="14" stroke-dasharray="184 105" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="46" fill="none" stroke="#F28C38" stroke-width="14" stroke-dasharray="58 231" stroke-linecap="round" transform="rotate(149 60 60)"/>
+              <circle cx="60" cy="60" r="46" fill="none" stroke="#10B981" stroke-width="14" stroke-dasharray="35 254" stroke-linecap="round" transform="rotate(220 60 60)"/>
+              <text x="60" y="56" text-anchor="middle" font-family="'Figtree'" font-size="16" font-weight="800" fill="#111">$10.2M</text>
+              <text x="60" y="72" text-anchor="middle" font-family="'Figtree'" font-size="8" font-weight="600" fill="#9CA3AF" letter-spacing="0.06em">TOTAL VOL</text>
+            </svg>
+            <div class="sts" style="flex:1">
+              <div class="st"><span class="st-dot" style="background:#e27533"></span><span class="st-l">Cards</span><span class="st-v" style="font-size:13px">64%</span></div>
+              <div class="st"><span class="st-dot" style="background:#F28C38"></span><span class="st-l">Wallets</span><span class="st-v" style="font-size:13px">20%</span></div>
+              <div class="st"><span class="st-dot" style="background:#10B981"></span><span class="st-l">Bank Transfer</span><span class="st-v" style="font-size:13px">12%</span></div>
+              <div class="st"><span class="st-dot" style="background:#E5E7EB"></span><span class="st-l">Other</span><span class="st-v" style="font-size:13px">4%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Second row: Success Rate + Connector Performance -->
+      <div class="row">
+        <div class="c c-w">
+          <div class="c-h"><span class="c-t">Success Rate Over Time</span><div class="tabs"><button class="tab on">Daily</button><button class="tab">Weekly</button></div></div>
+          <div class="c-b"><div class="chart" style="height:140px"><canvas id="sc"></canvas></div></div>
+        </div>
+        <div class="c c-n">
+          <div class="c-h"><span class="c-t">Connector Performance</span><span style="font-size:10px;color:var(--text-3)">Success rate by provider</span></div>
+          <div class="c-b">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:600;width:52px;flex-shrink:0">Stripe</span><div style="flex:1;height:6px;background:#F3F4F6;border-radius:3px;overflow:hidden"><div style="width:99.2%;height:100%;background:#e27533;border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;font-variant-numeric:tabular-nums;width:36px;text-align:right">99.2%</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:600;width:52px;flex-shrink:0">Adyen</span><div style="flex:1;height:6px;background:#F3F4F6;border-radius:3px;overflow:hidden"><div style="width:98.8%;height:100%;background:#F28C38;border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;font-variant-numeric:tabular-nums;width:36px;text-align:right">98.8%</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:600;width:52px;flex-shrink:0">PayPal</span><div style="flex:1;height:6px;background:#F3F4F6;border-radius:3px;overflow:hidden"><div style="width:97.4%;height:100%;background:#d4621e;border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;font-variant-numeric:tabular-nums;width:36px;text-align:right">97.4%</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:600;width:52px;flex-shrink:0">Klarna</span><div style="flex:1;height:6px;background:#F3F4F6;border-radius:3px;overflow:hidden"><div style="width:96.1%;height:100%;background:#f5a864;border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;font-variant-numeric:tabular-nums;width:36px;text-align:right">96.1%</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;font-weight:600;width:52px;flex-shrink:0">Razorpay</span><div style="flex:1;height:6px;background:#F3F4F6;border-radius:3px;overflow:hidden"><div style="width:95.6%;height:100%;background:#fbc490;border-radius:3px"></div></div><span style="font-size:10px;font-weight:600;font-variant-numeric:tabular-nums;width:36px;text-align:right">95.6%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const canvas = document.getElementById('vc');
+const ctx = canvas.getContext('2d');
+const dpr = 2;
+const rect = canvas.parentElement.getBoundingClientRect();
+canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+canvas.style.width = rect.width + 'px'; canvas.style.height = rect.height + 'px';
+ctx.scale(dpr, dpr);
+const w = rect.width, h = rect.height;
+const pad = { top: 14, right: 14, bottom: 32, left: 40 };
+const cW = w - pad.left - pad.right, cH = h - pad.top - pad.bottom;
+const labels = ['PayLink', 'NordFin', 'Swift', 'AsiaPay', 'MerchX', 'EuroPay', 'QuickBuy'];
+const data = [52340, 31200, 22100, 18450, 14200, 11800, 8900];
+const max = Math.max(...data) * 1.12;
+const oranges = ['#e27533','#F28C38','#d4621e','#f5a864','#c4520a','#fbc490','#b84a0f'];
+ctx.strokeStyle = '#E5E7EB'; ctx.lineWidth = 0.5;
+for (let i = 0; i <= 4; i++) {
+  const y = pad.top + (cH / 4) * i;
+  ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
+  ctx.fillStyle = '#9CA3AF'; ctx.font = '500 9.5px "Figtree"'; ctx.textAlign = 'right';
+  ctx.fillText(Math.round((max - (max / 4) * i) / 1000) + 'K', pad.left - 7, y + 3);
+}
+const gap = cW / data.length, barW = gap * 0.5;
+data.forEach((val, i) => {
+  const barH = (val / max) * cH, x = pad.left + gap * i + (gap - barW) / 2, y = pad.top + cH - barH;
+  ctx.fillStyle = oranges[i % oranges.length];
+  ctx.beginPath();
+  const r = 3; ctx.moveTo(x+r,y); ctx.lineTo(x+barW-r,y); ctx.quadraticCurveTo(x+barW,y,x+barW,y+r);
+  ctx.lineTo(x+barW,y+barH); ctx.lineTo(x,y+barH); ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.fill();
+  ctx.fillStyle = '#9CA3AF'; ctx.font = '500 9px "Figtree"'; ctx.textAlign = 'center';
+  ctx.fillText(labels[i], x + barW / 2, pad.top + cH + 18);
+});
+
+// Success rate line chart
+const sc = document.getElementById('sc');
+const sctx = sc.getContext('2d');
+const sr = sc.parentElement.getBoundingClientRect();
+sc.width = sr.width * dpr; sc.height = sr.height * dpr;
+sc.style.width = sr.width + 'px'; sc.style.height = sr.height + 'px';
+sctx.scale(dpr, dpr);
+const sw = sr.width, sh = sr.height;
+const sp = { top: 10, right: 14, bottom: 28, left: 36 };
+const scW = sw - sp.left - sp.right, scH = sh - sp.top - sp.bottom;
+const sData = [99.1, 99.4, 99.8, 99.2, 99.6, 99.7, 99.3, 99.5, 99.8, 99.9, 99.4, 99.7, 99.6, 99.8];
+const sLabels = ['Apr 1','','Apr 5','','Apr 9','','Apr 13','','Apr 17','','Apr 21','','Apr 25',''];
+const sMin = 98.5, sMax = 100.2;
+
+// Grid
+sctx.strokeStyle = '#E5E7EB'; sctx.lineWidth = 0.5;
+for (let i = 0; i <= 3; i++) {
+  const y = sp.top + (scH / 3) * i;
+  sctx.beginPath(); sctx.moveTo(sp.left, y); sctx.lineTo(sw - sp.right, y); sctx.stroke();
+  sctx.fillStyle = '#9CA3AF'; sctx.font = '500 9px "Figtree"'; sctx.textAlign = 'right';
+  const v = sMax - ((sMax - sMin) / 3) * i;
+  sctx.fillText(v.toFixed(1) + '%', sp.left - 6, y + 3);
+}
+
+// Area fill
+const points = sData.map((v, i) => ({
+  x: sp.left + (scW / (sData.length - 1)) * i,
+  y: sp.top + scH - ((v - sMin) / (sMax - sMin)) * scH
+}));
+const grad = sctx.createLinearGradient(0, sp.top, 0, sp.top + scH);
+grad.addColorStop(0, 'rgba(226,117,51,0.12)');
+grad.addColorStop(1, 'rgba(226,117,51,0)');
+sctx.beginPath();
+sctx.moveTo(points[0].x, points[0].y);
+for (let i = 1; i < points.length; i++) {
+  const cx = (points[i-1].x + points[i].x) / 2;
+  sctx.bezierCurveTo(cx, points[i-1].y, cx, points[i].y, points[i].x, points[i].y);
+}
+sctx.lineTo(points[points.length-1].x, sp.top + scH);
+sctx.lineTo(points[0].x, sp.top + scH);
+sctx.closePath();
+sctx.fillStyle = grad;
+sctx.fill();
+
+// Line
+sctx.beginPath();
+sctx.moveTo(points[0].x, points[0].y);
+for (let i = 1; i < points.length; i++) {
+  const cx = (points[i-1].x + points[i].x) / 2;
+  sctx.bezierCurveTo(cx, points[i-1].y, cx, points[i].y, points[i].x, points[i].y);
+}
+sctx.strokeStyle = '#e27533';
+sctx.lineWidth = 2;
+sctx.lineJoin = 'round';
+sctx.stroke();
+
+// Data point at latest
+const last = points[points.length - 1];
+sctx.beginPath(); sctx.arc(last.x, last.y, 4, 0, Math.PI * 2); sctx.fillStyle = '#e27533'; sctx.fill();
+sctx.beginPath(); sctx.arc(last.x, last.y, 2, 0, Math.PI * 2); sctx.fillStyle = '#fff'; sctx.fill();
+
+// X labels
+sctx.fillStyle = '#9CA3AF'; sctx.font = '500 8.5px "Figtree"'; sctx.textAlign = 'center';
+sLabels.forEach((l, i) => {
+  if (l) sctx.fillText(l, sp.left + (scW / (sData.length - 1)) * i, sp.top + scH + 16);
+});
+</script>
+</body>
+</html>
