@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 770" fill="none">
+  <rect width="1440" height="770" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="1440" height="48" fill="#FFFFFF" stroke="#E5E5E5"/>
+  <circle cx="24" cy="24" r="6" fill="#E27533"/>
+  <rect x="48" y="18" width="120" height="12" rx="4" fill="#E5E7EB"/>
+  <rect x="40" y="80" width="280" height="620" rx="12" fill="#FFFFFF" stroke="#E5E5E5"/>
+  <rect x="360" y="80" width="1040" height="120" rx="12" fill="#FFFFFF" stroke="#E5E5E5"/>
+  <rect x="380" y="100" width="160" height="80" rx="8" fill="#FDF3ED"/>
+  <rect x="560" y="100" width="160" height="80" rx="8" fill="#F3F4F6"/>
+  <rect x="740" y="100" width="160" height="80" rx="8" fill="#F3F4F6"/>
+  <rect x="360" y="220" width="680" height="480" rx="12" fill="#FFFFFF" stroke="#E5E5E5"/>
+  <rect x="1060" y="220" width="340" height="480" rx="12" fill="#FFFFFF" stroke="#E5E5E5"/>
+  <path d="M400 580 L500 480 L620 520 L760 380 L900 420 L980 360" stroke="#E27533" stroke-width="3" fill="none"/>
+  <text x="720" y="400" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#9CA3AF">BetterSwitch Dashboard Preview</text>
+</svg>

@@ -1,0 +1,32 @@
+# Cache-Control headers for static assets
+# Works with Netlify, Vercel, and similar hosting platforms
+
+# Images - cache for 1 year
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+
+# JavaScript and CSS - cache for 1 year with content hash
+/assets/js/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/css/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML - no caching
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
